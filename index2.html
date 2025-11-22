@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kawaii Study Hub</title>
+
+  <!-- Cute font (works if you’re online, page still works without it) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap">
+
+  <style>
+    :root {
+      --baby-blue: #cfe9ff;
+      --baby-blue-deep: #60a5fa;
+      --baby-pink: #ffe4f4;
+      --baby-pink-deep: #ec4899;
+      --lavender: #e7ddff;
+      --lavender-deep: #7c3aed;
+      --mint: #a7f3d0;
+      --soft-red: #fecaca;
+      --soft-gray: #6b7280;
+      --card-bg: #ffffffee;
+      --shadow-soft: 0 16px 40px rgba(148, 163, 184, 0.35);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Baloo 2", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, var(--baby-blue), transparent 60%),
+        radial-gradient(circle at bottom right, var(--baby-pink), transparent 60%),
+        radial-gradient(circle at center, var(--lavender), transparent 60%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1100px;
+      background: var(--card-bg);
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      overflow: hidden;
+    }
+
+    @media (max-width: 800px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+      }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, var(--baby-pink), var(--lavender));
+      padding: 18px 18px 20px;
+      border-right: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffffffaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .brand-text-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #9d174d;
+      line-height: 1.1;
+    }
+
+    .brand-text-sub {
+      font-size: 0.8rem;
+      color: #6b21a8;
+    }
+
+    .sidebar-section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #6b21a8;
+      margin: 14px 4px 6px;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 10px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #4a044e;
+      transition: background 0.12s ease, transform 0.06s ease;
+    }
+
+    .nav-btn span.icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ffffffaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .nav-btn.active {
+      background: #fce7f3dd;
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:hover {
+      background: #fdf2ffcc;
+    }
+
+    .sidebar-footer {
+      margin-top: 24px;
+      padding: 10px 8px 6px;
+      border-radius: 16px;
+      background: #ffffff66;
+      font-size: 0.8rem;
+      color: #6b21a8;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fef3c7cc;
+      font-size: 0.7rem;
+      color: #92400e;
+      margin-top: 4px;
+    }
+
+    /* Main */
+    .main {
+      padding: 18px 22px 22px;
+      background:
+        radial-gradient(circle at top right, #e0f2fe, transparent 55%),
+        radial-gradient(circle at bottom left, #fef3c7, transparent 55%);
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .main-title {
+      font-size: 1.4rem;
+      color: #1f2937;
+    }
+
+    .main-subtitle {
+      font-size: 0.85rem;
+      color: var(--soft-gray);
+    }
+
+    .score-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: #e0f2fed9;
+      color: #1d4ed8;
+    }
+
+    .score-pill strong { font-weight: 700; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: 0 12px 30px rgba(148, 163, 184, 0.35);
+      margin-bottom: 14px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--soft-gray);
+    }
+
+    .select-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .select-row label {
+      font-size: 0.85rem;
+      color: var(--soft-gray);
+    }
+
+    select {
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.1s;
+    }
+
+    .btn-primary {
+      background: #bfdbfe;
+      color: #1d4ed8;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-soft {
+      background: #fce7f3;
+      color: #9d174d;
+      box-shadow: 0 3px 10px rgba(236, 72, 153, 0.25);
+    }
+
+    .btn-soft:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 12px rgba(236, 72, 153, 0.35);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      box-shadow: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #93c5fd, #f9a8d4, #c4b5fd);
+      transition: width 0.25s ease;
+    }
+
+    .question-subject {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #dbeafe;
+      color: #1d4ed8;
+      margin-bottom: 4px;
+    }
+
+    .question-text {
+      font-size: 1rem;
+      color: #111827;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .choice-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #f9fafb;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.1s ease;
+    }
+
+    .choice-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(148, 163, 184, 0.4);
+      background: #fef3ff;
+    }
+
+    .choice-letter {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #374151;
+      flex-shrink: 0;
+    }
+
+    .choice-btn.correct { background: #d1fae5; }
+    .choice-btn.incorrect { background: #fee2e2; }
+
+    .quiz-status-line {
+      font-size: 0.8rem;
+      color: var(--soft-gray);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .result-summary {
+      text-align: center;
+      padding: 12px 4px 4px;
+    }
+
+    .result-summary h3 {
+      margin: 4px 0 8px;
+      font-size: 1.2rem;
+      color: var(--lavender-deep);
+    }
+
+    .result-summary p {
+      margin: 3px 0;
+      font-size: 0.9rem;
+      color: #374151;
+    }
+
+    .result-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .pill-good { background: #d1fae5; color: #166534; }
+    .pill-okay { background: #fef9c3; color: #854d0e; }
+    .pill-try  { background: #fee2e2; color: #b91c1c; }
+
+    /* Materials */
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .material-card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.4);
+    }
+
+    .material-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .material-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #1d4ed8;
+    }
+
+    .material-desc {
+      font-size: 0.85rem;
+      color: var(--soft-gray);
+      margin-bottom: 8px;
+    }
+
+    .material-link {
+      font-size: 0.85rem;
+      color: #ec4899;
+      text-decoration: none;
+    }
+
+    .material-link:hover { text-decoration: underline; }
+
+    /* History */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 8px 10px;
+      box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+    }
+
+    .history-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .history-title { font-weight: 600; color: #111827; }
+
+    .history-meta { font-size: 0.75rem; color: var(--soft-gray); }
+
+    .history-score {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .history-score.good { color: #166534; }
+    .history-score.okay { color: #854d0e; }
+    .history-score.try  { color: #b91c1c; }
+
+    .empty-text { font-size: 0.85rem; color: var(--soft-gray); }
+
+    /* Embedded Quizlets */
+    .embed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .embed-card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      padding: 10px 10px 14px;
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .embed-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .embed-note {
+      font-size: 0.75rem;
+      color: var(--soft-gray);
+    }
+
+    .embed-card iframe {
+      width: 100%;
+      height: 260px;
+      border: 0;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .embed-link {
+      font-size: 0.8rem;
+      color: #ec4899;
+      text-decoration: none;
+    }
+
+    .embed-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Builder & vocab */
+    .builder-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.15fr) minmax(260px, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .builder-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .field-group label {
+      font-size: 0.8rem;
+      color: var(--soft-gray);
+    }
+
+    .field-group input,
+    .field-group textarea {
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      outline: none;
+    }
+
+    .field-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .helper-text {
+      font-size: 0.75rem;
+      color: var(--soft-gray);
+    }
+
+    .pill-small {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      font-size: 0.75rem;
+      color: #1d4ed8;
+    }
+
+    .status-text {
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .status-ok {
+      color: #15803d;
+    }
+
+    .status-bad {
+      color: #b91c1c;
+    }
+
+    .mini-count {
+      font-size: 0.8rem;
+      color: var(--soft-gray);
+    }
+
+    /* Vocab games */
+    .vocab-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .vocab-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bee-definition {
+      font-size: 0.9rem;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .bee-input {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 6px;
+    }
+
+    .bee-feedback {
+      font-size: 0.8rem;
+      min-height: 18px;
+    }
+
+    .bee-feedback.ok {
+      color: #15803d;
+    }
+
+    .bee-feedback.bad {
+      color: #b91c1c;
+    }
+
+    .match-term {
+      font-size: 0.95rem;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .match-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .match-option-btn {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 6px 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.85rem;
+      background: #f9fafb;
+      transition: background 0.1s, box-shadow 0.1s, transform 0.06s;
+    }
+
+    .match-option-btn:hover {
+      background: #fef3ff;
+      box-shadow: 0 2px 8px rgba(148, 163, 184, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .match-status {
+      font-size: 0.8rem;
+      min-height: 18px;
+      margin-top: 4px;
+    }
+
+    .match-status.ok {
+      color: #15803d;
+    }
+
+    .match-status.bad {
+      color: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🎀</div>
+        <div>
+          <div class="brand-text-title">Kawaii Study</div>
+          <div class="brand-text-sub">Pastel practice hub</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">Sections</div>
+      <div class="nav-list">
+        <button class="nav-btn active" data-section="quiz">
+          <span class="icon">📋</span>
+          <span>Quizzes</span>
+        </button>
+        <button class="nav-btn" data-section="builder">
+          <span class="icon">🛠️</span>
+          <span>Question builder</span>
+        </button>
+        <button class="nav-btn" data-section="vocab">
+          <span class="icon">🔤</span>
+          <span>Vocab games</span>
+        </button>
+        <button class="nav-btn" data-section="materials">
+          <span class="icon">📎</span>
+          <span>Study materials</span>
+        </button>
+        <button class="nav-btn" data-section="embeds">
+          <span class="icon">🧪</span>
+          <span>Embedded tests</span>
+        </button>
+        <button class="nav-btn" data-section="history">
+          <span class="icon">📈</span>
+          <span>Score history</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        Scores, custom questions, and vocab are saved in this browser.<br />
+        <span class="chip">Your private study corner 💕</span>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="main-header">
+        <div>
+          <div class="main-title">Welcome to your study corner ☁️</div>
+          <div class="main-subtitle">
+            Practice with quizzes, build your own, and drill vocab with spelling and matching.
+          </div>
+        </div>
+        <div id="lastScorePill" class="score-pill" style="display:none;">
+          Last score: <strong id="lastScoreText"></strong>
+        </div>
+      </header>
+
+      <!-- Quiz Section -->
+      <section id="section-quiz" class="section active">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Quiz setup</div>
+              <div class="card-sub">Choose a subject and start your session.</div>
+            </div>
+          </div>
+
+          <div class="select-row">
+            <label for="quizSelect">Quiz:</label>
+            <select id="quizSelect"></select>
+            <button id="startQuizBtn" class="btn btn-primary">
+              <span>Start quiz</span> <span>✨</span>
+            </button>
+          </div>
+          <div class="card-sub" id="quizDescription"></div>
+        </div>
+
+        <div id="quizCard" class="card" style="display:none;">
+          <div class="progress-bar">
+            <div id="quizProgressInner" class="progress-inner"></div>
+          </div>
+          <div id="quizContent"></div>
+          <div class="quiz-status-line" id="quizStatusLine"></div>
+        </div>
+      </section>
+
+      <!-- Builder Section -->
+      <section id="section-builder" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Question & vocab builder</div>
+              <div class="card-sub">
+                Add new questions and vocabulary directly here. They’ll be saved in this browser and added to your quizzes/games.
+              </div>
+            </div>
+          </div>
+
+          <div class="builder-grid">
+            <!-- Question builder -->
+            <div>
+              <h3 style="margin:0 0 8px;font-size:1rem;">Add multiple-choice question</h3>
+              <div class="mini-count" id="userQuestionCount">Custom questions: 0</div>
+
+              <div class="field-group">
+                <label for="builderQuizSelect">Quiz to add to</label>
+                <select id="builderQuizSelect"></select>
+              </div>
+
+              <div class="field-group">
+                <label for="builderSubjectInput">Subject label <span class="helper-text">(shown above question)</span></label>
+                <input id="builderSubjectInput" type="text" placeholder="e.g., Math vocab, Writing, Med terms" />
+              </div>
+
+              <div class="field-group">
+                <label for="builderQuestionInput">Question text</label>
+                <textarea id="builderQuestionInput" placeholder="Type your question here..."></textarea>
+              </div>
+
+              <div class="field-group">
+                <label>Choices (A–D)</label>
+                <input id="builderChoice1" type="text" placeholder="Choice A" />
+                <input id="builderChoice2" type="text" placeholder="Choice B" />
+                <input id="builderChoice3" type="text" placeholder="Choice C" />
+                <input id="builderChoice4" type="text" placeholder="Choice D" />
+                <div class="helper-text">Leave unused choices blank if you only want 2 or 3.</div>
+              </div>
+
+              <div class="field-group">
+                <label for="builderCorrectSelect">Which choice is correct?</label>
+                <select id="builderCorrectSelect">
+                  <option value="0">A</option>
+                  <option value="1">B</option>
+                  <option value="2">C</option>
+                  <option value="3">D</option>
+                </select>
+              </div>
+
+              <button id="builderAddQuestionBtn" class="btn btn-primary">Add question ✅</button>
+              <div id="builderQuestionStatus" class="status-text"></div>
+            </div>
+
+            <!-- Vocab builder -->
+            <div>
+              <h3 style="margin:0 0 8px;font-size:1rem;">Add vocabulary item</h3>
+              <div class="mini-count" id="vocabCount">Vocabulary items: 0</div>
+
+              <div class="field-group">
+                <label for="vocabTermInput">Word / term</label>
+                <input id="vocabTermInput" type="text" placeholder="e.g., hyper, fragment, tachycardia" />
+              </div>
+
+              <div class="field-group">
+                <label for="vocabDefinitionInput">Definition</label>
+                <textarea id="vocabDefinitionInput" placeholder="Short explanation of the term..."></textarea>
+              </div>
+
+              <div class="field-group">
+                <label for="vocabCategoryInput">Category <span class="helper-text">(GED Math, GED Writing, Medical, etc.)</span></label>
+                <input id="vocabCategoryInput" type="text" placeholder="e.g., GED Writing, Medical" />
+              </div>
+
+              <button id="vocabAddBtn" class="btn btn-soft">Add vocab 💡</button>
+              <div id="vocabStatus" class="status-text"></div>
+
+              <div style="margin-top:10px;">
+                <span class="pill-small">Tip</span>
+                <div class="helper-text">
+                  Any vocab you add here can be used in Spelling Bee and Match Definition games.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vocab games Section -->
+      <section id="section-vocab" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Vocabulary games</div>
+              <div class="card-sub">
+                These games use the vocabulary you entered in the builder. Great for memorizing spelling and meanings.
+              </div>
+            </div>
+          </div>
+
+          <div class="vocab-layout">
+            <!-- Spelling Bee -->
+            <div>
+              <h3 style="margin:0 0 6px;font-size:1rem;">Spelling bee 🐝</h3>
+              <div class="helper-text" id="beeInfo">
+                You’ll see a definition. Type the correct word.
+              </div>
+              <div style="margin:6px 0;">
+                <button id="beeNewBtn" class="btn btn-primary">New word</button>
+              </div>
+              <div id="beeDefinition" class="bee-definition"></div>
+              <input id="beeInput" class="bee-input" type="text" placeholder="Type the word here..." />
+              <button id="beeCheckBtn" class="btn btn-soft" style="margin-bottom:4px;">Check</button>
+              <div id="beeFeedback" class="bee-feedback"></div>
+            </div>
+
+            <!-- Match definition -->
+            <div>
+              <h3 style="margin:0 0 6px;font-size:1rem;">Match the definition 🎯</h3>
+              <div class="helper-text" id="matchInfo">
+                You’ll see a term. Pick the correct definition.
+              </div>
+              <div style="margin:6px 0;">
+                <button id="matchNewBtn" class="btn btn-primary">New round</button>
+              </div>
+              <div id="matchTerm" class="match-term"></div>
+              <div id="matchOptions" class="match-options"></div>
+              <div id="matchStatus" class="match-status"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Materials Section -->
+      <section id="section-materials" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Study materials</div>
+              <div class="card-sub">
+                Click to open resources in a new tab. You can edit this list in the file.
+              </div>
+            </div>
+          </div>
+          <div class="materials-grid" id="materialsGrid"></div>
+        </div>
+      </section>
+
+      <!-- Embedded Quizlets Section -->
+      <section id="section-embeds" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Embedded Quizlet tests</div>
+              <div class="card-sub">
+                Live Quizlet sets inside your site. Add more by copying a card block in the HTML.
+              </div>
+            </div>
+          </div>
+
+          <div class="embed-grid">
+            <!-- GED Math -->
+            <div class="embed-card">
+              <div class="embed-title">
+                <span>📐</span>
+                <span>GED Math – Flashcards</span>
+              </div>
+              <div class="embed-note">
+                Based on your GED math flashcard set.
+              </div>
+              <iframe
+                src="https://quizlet.com/7810655/flashcards/embed"
+                allowfullscreen>
+              </iframe>
+              <a
+                class="embed-link"
+                href="https://quizlet.com/7810655/ged-math-flash-cards/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Open on Quizlet ↗
+              </a>
+            </div>
+
+            <!-- GED Language Arts Writing -->
+            <div class="embed-card">
+              <div class="embed-title">
+                <span>✏️</span>
+                <span>GED Language Arts – Writing</span>
+              </div>
+              <div class="embed-note">
+                Writing terms: fragments, run-ons, topic sentences, and more.
+              </div>
+              <iframe
+                src="https://quizlet.com/6527037/flashcards/embed"
+                allowfullscreen>
+              </iframe>
+              <a
+                class="embed-link"
+                href="https://quizlet.com/6527037/ged-language-arts-writing-flash-cards/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Open on Quizlet ↗
+              </a>
+            </div>
+
+            <!-- Medical terminology -->
+            <div class="embed-card">
+              <div class="embed-title">
+                <span>🩺</span>
+                <span>Medical terminology</span>
+              </div>
+              <div class="embed-note">
+                Prefixes, suffixes, and roots used in healthcare terms.
+              </div>
+              <iframe
+                src="https://quizlet.com/1070169354/flashcards/embed"
+                allowfullscreen>
+              </iframe>
+              <a
+                class="embed-link"
+                href="https://quizlet.com/1070169354/medical-terminology-flash-cards/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Open on Quizlet ↗
+              </a>
+            </div>
+
+            <!-- Example: Match game embed (your sample link) -->
+            <div class="embed-card">
+              <div class="embed-title">
+                <span>🧩</span>
+                <span>Medical terminology – Match game</span>
+              </div>
+              <div class="embed-note">
+                Quizlet “Match” mode for your medical terminology set.
+              </div>
+              <iframe
+                src="https://quizlet.com/1070169354/match/embed?i=6x683e&x=1jj1"
+                height="500"
+                width="100%"
+                style="border:0"
+                allowfullscreen>
+              </iframe>
+              <a
+                class="embed-link"
+                href="https://quizlet.com/1070169354/medical-terminology-flash-cards/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Open full set on Quizlet ↗
+              </a>
+            </div>
+          </div>
+
+          <p class="embed-note" style="margin-top:10px;">
+            To add more sets: copy one <code>&lt;div class="embed-card"&gt;...&lt;/div&gt;</code> block above,
+            change the title, emoji, <code>iframe src</code>, and link URL.
+          </p>
+        </div>
+      </section>
+
+      <!-- History Section -->
+      <section id="section-history" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Score history</div>
+              <div class="card-sub">
+                Every finished quiz session is saved here for this browser.
+              </div>
+            </div>
+            <button id="clearHistoryBtn" class="btn btn-danger">
+              Clear history
+            </button>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ========= Base data (built-in quizzes) =========
+    const QUIZZES = {
+      ged_math_terms: {
+        id: "ged_math_terms",
+        name: "GED • Math keywords",
+        description: "Words like sum, difference, product, quotient, total, average, perimeter, area, and more.",
+        questions: [
+          {
+            subject: "Math vocab",
+            question: "The word “sum” in a word problem usually means you should:",
+            choices: ["Multiply the numbers", "Subtract the numbers", "Add the numbers", "Divide the numbers"],
+            correct: 2
+          },
+          {
+            subject: "Math vocab",
+            question: "If a problem asks for the “difference” between two numbers, what operation do you use?",
+            choices: ["Addition", "Subtraction", "Multiplication", "Division"],
+            correct: 1
+          },
+          {
+            subject: "Math vocab",
+            question: "The “product” of two numbers is the result of:",
+            choices: ["Adding them", "Subtracting them", "Multiplying them", "Dividing them"],
+            correct: 2
+          },
+          {
+            subject: "Math vocab",
+            question: "The “quotient” is the answer when you:",
+            choices: ["Add two numbers", "Subtract two numbers", "Multiply two numbers", "Divide one number by another"],
+            correct: 3
+          },
+          {
+            subject: "Math vocab",
+            question: "A problem says: “the total number of tickets sold.” Which operation does “total” usually signal?",
+            choices: [
+              "Addition to find how many altogether",
+              "Subtraction to find how many are left",
+              "Multiplication for repeated groups",
+              "Division into equal parts"
+            ],
+            correct: 0
+          }
+        ]
+      },
+
+      ged_language_writing: {
+        id: "ged_language_writing",
+        name: "GED • Language arts: writing",
+        description: "Parts of speech and writing terms: active verbs, fragments, run-ons, topic sentences, tone, and more.",
+        questions: [
+          {
+            subject: "Writing vocab",
+            question: "An “active verb” is a verb that:",
+            choices: [
+              "Shows an action done by the subject",
+              "Shows no action at all",
+              "Comes only after a helping verb",
+              "Appears only in questions"
+            ],
+            correct: 0
+          },
+          {
+            subject: "Writing vocab",
+            question: "An adjective is a part of speech that mainly describes:",
+            choices: ["Verbs", "Nouns or pronouns", "Prepositions", "Conjunctions"],
+            correct: 1
+          }
+        ]
+      },
+
+      medical_terminology: {
+        id: "medical_terminology",
+        name: "Medical terminology basics",
+        description: "Common prefixes, suffixes, and roots used in healthcare terms.",
+        questions: [
+          {
+            subject: "Med terms",
+            question: "In medical words, the root “cardi / cardio” refers to the:",
+            choices: ["Lungs", "Stomach", "Heart", "Brain"],
+            correct: 2
+          },
+          {
+            subject: "Med terms",
+            question: "The suffix “-itis” usually means:",
+            choices: ["Inflammation", "Surgical removal", "Study of", "Enlargement"],
+            correct: 0
+          }
+        ]
+      }
+    };
+
+    // ========= Storage keys =========
+    const SCORE_KEY = "kawaiiStudyScores";
+    const USER_QUESTIONS_KEY = "kawaiiUserQuestionsV1";
+    const VOCAB_KEY = "kawaiiVocabItemsV1";
+
+    // ========= Helpers: localStorage =========
+    function safeGet(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function safeSet(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch {
+        // ignore
+      }
+    }
+
+    // Scores
+    function loadScoreHistory() {
+      return safeGet(SCORE_KEY, []);
+    }
+    function saveScoreHistory(h) {
+      safeSet(SCORE_KEY, h);
+    }
+    function addHistoryEntry(entry) {
+      const history = loadScoreHistory();
+      history.push(entry);
+      saveScoreHistory(history);
+      return history;
+    }
+
+    // User questions
+    function loadUserQuestions() {
+      return safeGet(USER_QUESTIONS_KEY, []);
+    }
+    function saveUserQuestions(list) {
+      safeSet(USER_QUESTIONS_KEY, list);
+    }
+    function addUserQuestion(q) {
+      const list = loadUserQuestions();
+      list.push(q);
+      saveUserQuestions(list);
+      return list;
+    }
+
+    // Vocab
+    function loadVocab() {
+      return safeGet(VOCAB_KEY, []);
+    }
+    function saveVocab(list) {
+      safeSet(VOCAB_KEY, list);
+    }
+    function addVocabItem(item) {
+      const list = loadVocab();
+      list.push(item);
+      saveVocab(list);
+      return list;
+    }
+
+    // ========= Elements & state =========
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const sections = {
+      quiz: document.getElementById("section-quiz"),
+      builder: document.getElementById("section-builder"),
+      vocab: document.getElementById("section-vocab"),
+      materials: document.getElementById("section-materials"),
+      embeds: document.getElementById("section-embeds"),
+      history: document.getElementById("section-history")
+    };
+
+    // Quizzes
+    const quizSelect = document.getElementById("quizSelect");
+    const quizDescription = document.getElementById("quizDescription");
+    const startQuizBtn = document.getElementById("startQuizBtn");
+    const quizCard = document.getElementById("quizCard");
+    const quizContent = document.getElementById("quizContent");
+    const quizProgressInner = document.getElementById("quizProgressInner");
+    const quizStatusLine = document.getElementById("quizStatusLine");
+
+    // Builder
+    const builderQuizSelect = document.getElementById("builderQuizSelect");
+    const builderSubjectInput = document.getElementById("builderSubjectInput");
+    const builderQuestionInput = document.getElementById("builderQuestionInput");
+    const builderChoice1 = document.getElementById("builderChoice1");
+    const builderChoice2 = document.getElementById("builderChoice2");
+    const builderChoice3 = document.getElementById("builderChoice3");
+    const builderChoice4 = document.getElementById("builderChoice4");
+    const builderCorrectSelect = document.getElementById("builderCorrectSelect");
+    const builderAddQuestionBtn = document.getElementById("builderAddQuestionBtn");
+    const builderQuestionStatus = document.getElementById("builderQuestionStatus");
+    const userQuestionCount = document.getElementById("userQuestionCount");
+
+    // Vocab builder
+    const vocabTermInput = document.getElementById("vocabTermInput");
+    const vocabDefinitionInput = document.getElementById("vocabDefinitionInput");
+    const vocabCategoryInput = document.getElementById("vocabCategoryInput");
+    const vocabAddBtn = document.getElementById("vocabAddBtn");
+    const vocabStatus = document.getElementById("vocabStatus");
+    const vocabCount = document.getElementById("vocabCount");
+
+    // Vocab games
+    const beeInfo = document.getElementById("beeInfo");
+    const beeNewBtn = document.getElementById("beeNewBtn");
+    const beeDefinition = document.getElementById("beeDefinition");
+    const beeInput = document.getElementById("beeInput");
+    const beeCheckBtn = document.getElementById("beeCheckBtn");
+    const beeFeedback = document.getElementById("beeFeedback");
+
+    const matchInfo = document.getElementById("matchInfo");
+    const matchNewBtn = document.getElementById("matchNewBtn");
+    const matchTerm = document.getElementById("matchTerm");
+    const matchOptions = document.getElementById("matchOptions");
+    const matchStatus = document.getElementById("matchStatus");
+
+    // Materials
+    const materialsGrid = document.getElementById("materialsGrid");
+
+    // History & header
+    const historyList = document.getElementById("historyList");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+    const lastScorePill = document.getElementById("lastScorePill");
+    const lastScoreText = document.getElementById("lastScoreText");
+
+    // Other
+    let currentQuiz = null;
+    let currentIndex = 0;
+    let currentScore = 0;
+    let answeredCurrent = false;
+
+    let currentBeeItem = null;
+    let currentMatchRound = null;
+
+    // ========= Navigation =========
+    navButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-section");
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        Object.entries(sections).forEach(([key, el]) => {
+          el.classList.toggle("active", key === target);
+        });
+        if (target === "history") {
+          renderHistory();
+        }
+      });
+    });
+
+    // ========= Quizzes: combined (built-in + user) =========
+    function getCombinedQuizById(id) {
+      const base = QUIZZES[id];
+      if (!base) return null;
+      const userQs = loadUserQuestions().filter(q => q.quizId === id);
+      return {
+        ...base,
+        questions: base.questions.concat(userQs)
+      };
+    }
+
+    // Populate both quiz dropdowns
+    function populateQuizSelects() {
+      quizSelect.innerHTML = "";
+      builderQuizSelect.innerHTML = "";
+      Object.values(QUIZZES).forEach(q => {
+        const opt1 = document.createElement("option");
+        opt1.value = q.id;
+        opt1.textContent = q.name;
+        quizSelect.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = q.id;
+        opt2.textContent = q.name;
+        builderQuizSelect.appendChild(opt2);
+      });
+
+      const first = Object.values(QUIZZES)[0];
+      if (first) {
+        quizSelect.value = first.id;
+        quizDescription.textContent = first.description;
+        builderQuizSelect.value = first.id;
+      }
+    }
+
+    quizSelect.addEventListener("change", () => {
+      const q = getCombinedQuizById(quizSelect.value);
+      if (!q) return;
+      quizDescription.textContent = q.description;
+    });
+
+    // Start quiz
+    startQuizBtn.addEventListener("click", () => {
+      const q = getCombinedQuizById(quizSelect.value);
+      if (!q) return;
+      if (!q.questions.length) {
+        alert("This quiz has no questions yet. Add some in the Question builder tab.");
+        return;
+      }
+      currentQuiz = {
+        ...q,
+        questions: shuffleArray(q.questions.slice())
+      };
+      currentIndex = 0;
+      currentScore = 0;
+      answeredCurrent = false;
+      quizCard.style.display = "block";
+      renderQuestion();
+    });
+
+    function shuffleArray(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function updateQuizProgress() {
+      if (!currentQuiz) return;
+      const total = currentQuiz.questions.length;
+      const percent = (currentIndex / total) * 100;
+      quizProgressInner.style.width = percent + "%";
+      quizStatusLine.textContent = `Question ${currentIndex + 1} of ${total}`;
+    }
+
+    function renderQuestion() {
+      if (!currentQuiz) return;
+      const total = currentQuiz.questions.length;
+      if (currentIndex >= total) {
+        renderResults(false);
+        return;
+      }
+
+      answeredCurrent = false;
+      const q = currentQuiz.questions[currentIndex];
+      updateQuizProgress();
+
+      const letters = ["A", "B", "C", "D", "E", "F"];
+      quizContent.innerHTML = `
+        <div class="question-subject">${q.subject || currentQuiz.name}</div>
+        <div class="question-text">${q.question}</div>
+        <div class="choices">
+          ${q.choices
+            .map(
+              (choice, i) => `
+              <button class="choice-btn" data-index="${i}">
+                <span class="choice-letter">${letters[i]}</span>
+                <span>${choice}</span>
+              </button>
+            `
+            )
+            .join("")}
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;">
+          <button id="quitQuizBtn" class="btn btn-soft">End quiz early</button>
+          <button id="nextQuestionBtn" class="btn btn-primary" disabled>Next</button>
+        </div>
+      `;
+
+      const choiceButtons = quizContent.querySelectorAll(".choice-btn");
+      const nextBtn = document.getElementById("nextQuestionBtn");
+      const quitBtn = document.getElementById("quitQuizBtn");
+
+      choiceButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (answeredCurrent) return;
+          answeredCurrent = true;
+
+          const chosen = Number(btn.getAttribute("data-index"));
+          const correctIndex = q.correct;
+
+          if (chosen === correctIndex) {
+            btn.classList.add("correct");
+            currentScore++;
+          } else {
+            btn.classList.add("incorrect");
+            choiceButtons.forEach(b => {
+              if (Number(b.getAttribute("data-index")) === correctIndex) {
+                b.classList.add("correct");
+              }
+            });
+          }
+
+          choiceButtons.forEach(b => (b.disabled = true));
+          nextBtn.disabled = false;
+        });
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex++;
+        renderQuestion();
+      });
+
+      quitBtn.addEventListener("click", () => {
+        renderResults(true);
+      });
+    }
+
+    function renderResults(early) {
+      if (!currentQuiz) return;
+      const total = currentQuiz.questions.length;
+      const percent = Math.round((currentScore / total) * 100);
+
+      let pillClass = "pill-try";
+      let message = "Keep going — every session helps.";
+      if (percent >= 80) {
+        pillClass = "pill-good";
+        message = "Amazing! You’re very close to ready.";
+      } else if (percent >= 60) {
+        pillClass = "pill-okay";
+        message = "Nice work. A bit more practice will boost you further.";
+      }
+
+      quizProgressInner.style.width = "100%";
+      quizStatusLine.textContent = early
+        ? `You ended the quiz early. You answered ${currentIndex} of ${total} questions.`
+        : `You completed this quiz.`;
+
+      const now = new Date();
+      const entry = {
+        quizId: currentQuiz.id,
+        quizName: currentQuiz.name,
+        date: now.toLocaleString(),
+        score: currentScore,
+        total,
+        percent
+      };
+      addHistoryEntry(entry);
+      updateLastScore(entry);
+
+      quizContent.innerHTML = `
+        <div class="result-summary">
+          <h3>${early ? "Session summary" : "Quiz complete!"}</h3>
+          <p>You answered <strong>${currentScore}</strong> out of <strong>${total}</strong> questions.</p>
+          <p><span class="result-pill ${pillClass}">${percent}%</span></p>
+          <p>${message}</p>
+          <p style="font-size:0.8rem;color:#9ca3af;margin-top:8px;">
+            Start again, or switch quizzes from the menu above.
+          </p>
+          <button id="restartQuizBtn" class="btn btn-primary" style="margin-top:8px;">
+            Try again 🔁
+          </button>
+        </div>
+      `;
+
+      const restartBtn = document.getElementById("restartQuizBtn");
+      restartBtn.addEventListener("click", () => {
+        currentIndex = 0;
+        currentScore = 0;
+        currentQuiz.questions = shuffleArray(currentQuiz.questions);
+        renderQuestion();
+      });
+
+      renderHistory();
+    }
+
+    // ========= Question builder =========
+    function refreshUserQuestionCount() {
+      const count = loadUserQuestions().length;
+      userQuestionCount.textContent = `Custom questions: ${count}`;
+    }
+
+    builderAddQuestionBtn.addEventListener("click", () => {
+      builderQuestionStatus.textContent = "";
+      builderQuestionStatus.className = "status-text";
+
+      const quizId = builderQuizSelect.value;
+      const subject = builderSubjectInput.value.trim() || "Custom";
+      const question = builderQuestionInput.value.trim();
+      const choicesRaw = [
+        builderChoice1.value.trim(),
+        builderChoice2.value.trim(),
+        builderChoice3.value.trim(),
+        builderChoice4.value.trim()
+      ];
+      const choices = choicesRaw.filter(c => c.length > 0);
+      const correctIndex = Number(builderCorrectSelect.value);
+
+      if (!quizId || !question || choices.length < 2) {
+        builderQuestionStatus.textContent = "Please enter a question and at least 2 choices.";
+        builderQuestionStatus.classList.add("status-bad");
+        return;
+      }
+      if (correctIndex >= choicesRaw.length || !choicesRaw[correctIndex]) {
+        builderQuestionStatus.textContent = "The correct answer must be one of the non-empty choices.";
+        builderQuestionStatus.classList.add("status-bad");
+        return;
+      }
+
+      const questionObj = {
+        quizId,
+        subject,
+        question,
+        choices,
+        correct: choices.indexOf(choicesRaw[correctIndex]),
+        createdAt: Date.now()
+      };
+
+      const list = addUserQuestion(questionObj);
+      refreshUserQuestionCount();
+
+      builderQuestionStatus.textContent = "Question added!";
+      builderQuestionStatus.classList.add("status-ok");
+
+      builderQuestionInput.value = "";
+      builderChoice1.value = "";
+      builderChoice2.value = "";
+      builderChoice3.value = "";
+      builderChoice4.value = "";
+    });
+
+    // ========= Vocab builder & games =========
+    function refreshVocabCount() {
+      const count = loadVocab().length;
+      vocabCount.textContent = `Vocabulary items: ${count}`;
+    }
+
+    vocabAddBtn.addEventListener("click", () => {
+      vocabStatus.textContent = "";
+      vocabStatus.className = "status-text";
+
+      const term = vocabTermInput.value.trim();
+      const definition = vocabDefinitionInput.value.trim();
+      const category = vocabCategoryInput.value.trim() || "General";
+
+      if (!term || !definition) {
+        vocabStatus.textContent = "Please enter both a term and a definition.";
+        vocabStatus.classList.add("status-bad");
+        return;
+      }
+
+      const item = {
+        term,
+        definition,
+        category,
+        createdAt: Date.now()
+      };
+
+      addVocabItem(item);
+      refreshVocabCount();
+
+      vocabStatus.textContent = "Vocabulary item added!";
+      vocabStatus.classList.add("status-ok");
+
+      vocabTermInput.value = "";
+      vocabDefinitionInput.value = "";
+      vocabCategoryInput.value = "";
+    });
+
+    // Spelling bee
+    function pickRandomVocab() {
+      const list = loadVocab();
+      if (!list.length) return null;
+      const index = Math.floor(Math.random() * list.length);
+      return list[index];
+    }
+
+    function startBeeRound() {
+      const list = loadVocab();
+      if (!list.length) {
+        beeDefinition.textContent = "";
+        beeFeedback.textContent = "";
+        beeFeedback.className = "bee-feedback";
+        beeInfo.textContent = "No vocabulary yet. Add some in the Question builder tab.";
+        return;
+      }
+      currentBeeItem = pickRandomVocab();
+      beeDefinition.textContent = currentBeeItem.definition;
+      beeInput.value = "";
+      beeInput.focus();
+      beeFeedback.textContent = "";
+      beeFeedback.className = "bee-feedback";
+    }
+
+    beeNewBtn.addEventListener("click", () => {
+      startBeeRound();
+    });
+
+    beeCheckBtn.addEventListener("click", () => {
+      if (!currentBeeItem) {
+        beeFeedback.textContent = "Click 'New word' to start.";
+        beeFeedback.className = "bee-feedback bad";
+        return;
+      }
+      const guess = beeInput.value.trim().toLowerCase();
+      const answer = currentBeeItem.term.trim().toLowerCase();
+
+      if (!guess) {
+        beeFeedback.textContent = "Type your guess first.";
+        beeFeedback.className = "bee-feedback bad";
+        return;
+      }
+
+      if (guess === answer) {
+        beeFeedback.textContent = `Correct! The word is "${currentBeeItem.term}".`;
+        beeFeedback.className = "bee-feedback ok";
+      } else {
+        beeFeedback.textContent = `Not quite. The correct spelling is "${currentBeeItem.term}".`;
+        beeFeedback.className = "bee-feedback bad";
+      }
+    });
+
+    // Match definition
+    function startMatchRound() {
+      const vocabList = loadVocab();
+      if (vocabList.length < 4) {
+        matchTerm.textContent = "";
+        matchOptions.innerHTML = "";
+        matchStatus.textContent = "You need at least 4 vocab items to play this game.";
+        matchStatus.className = "match-status bad";
+        return;
+      }
+
+      const shuffled = shuffleArray(vocabList.slice());
+      const correctItem = shuffled[0];
+      const distractors = shuffled.slice(1, 4);
+
+      const options = shuffleArray(
+        [correctItem.definition].concat(distractors.map(d => d.definition))
+      );
+
+      currentMatchRound = {
+        term: correctItem.term,
+        correctDefinition: correctItem.definition,
+        options
+      };
+
+      matchTerm.textContent = currentMatchRound.term;
+      matchOptions.innerHTML = "";
+      matchStatus.textContent = "";
+      matchStatus.className = "match-status";
+
+      options.forEach(def => {
+        const btn = document.createElement("button");
+        btn.className = "match-option-btn";
+        btn.textContent = def;
+        btn.addEventListener("click", () => {
+          if (!currentMatchRound) return;
+          if (def === currentMatchRound.correctDefinition) {
+            matchStatus.textContent = "Correct!";
+            matchStatus.className = "match-status ok";
+          } else {
+            matchStatus.textContent = "Try again. That’s not the right definition.";
+            matchStatus.className = "match-status bad";
+          }
+        });
+        matchOptions.appendChild(btn);
+      });
+    }
+
+    matchNewBtn.addEventListener("click", () => {
+      startMatchRound();
+    });
+
+    // ========= Study materials =========
+    const STUDY_MATERIALS = [
+      {
+        title: "GED math terms – original flashcards",
+        tag: "GED Math",
+        description: "Your Quizlet set that inspired the math vocabulary quiz.",
+        url: "https://quizlet.com/7810655/ged-math-flash-cards/"
+      },
+      {
+        title: "GED language arts writing – original flashcards",
+        tag: "GED Language",
+        description: "Your Quizlet set that inspired the writing vocabulary quiz.",
+        url: "https://quizlet.com/6527037/ged-language-arts-writing-flash-cards/"
+      },
+      {
+        title: "Medical terminology – original flashcards",
+        tag: "Medical",
+        description: "Your Quizlet set that inspired the medical terminology quiz.",
+        url: "https://quizlet.com/1070169354/medical-terminology-flash-cards/"
+      },
+      {
+        title: "GED official site",
+        tag: "GED",
+        description: "Official information and practice resources for the GED test.",
+        url: "https://ged.com"
+      },
+      {
+        title: "Khan Academy – Math",
+        tag: "Math",
+        description: "Free lessons and practice for algebra, geometry, and more.",
+        url: "https://www.khanacademy.org/math"
+      }
+    ];
+
+    function renderMaterials() {
+      materialsGrid.innerHTML = "";
+      STUDY_MATERIALS.forEach(mat => {
+        const card = document.createElement("div");
+        card.className = "material-card";
+        card.innerHTML = `
+          <div class="material-title">
+            <span>📎</span>
+            <span>${mat.title}</span>
+          </div>
+          <div style="margin:4px 0 6px;">
+            <span class="material-tag">${mat.tag}</span>
+          </div>
+          <div class="material-desc">${mat.description}</div>
+          <a class="material-link" href="${mat.url}" target="_blank" rel="noopener noreferrer">
+            Open resource ↗
+          </a>
+        `;
+        materialsGrid.appendChild(card);
+      });
+    }
+
+    // ========= History =========
+    function renderHistory() {
+      const history = loadScoreHistory();
+      historyList.innerHTML = "";
+
+      if (!history.length) {
+        const p = document.createElement("p");
+        p.className = "empty-text";
+        p.textContent = "No scores yet. Take a quiz and your results will show up here.";
+        historyList.appendChild(p);
+        return;
+      }
+
+      const sorted = [...history].reverse(); // newest first
+      sorted.forEach(entry => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        let scoreClass = "try";
+        if (entry.percent >= 80) scoreClass = "good";
+        else if (entry.percent >= 60) scoreClass = "okay";
+
+        item.innerHTML = `
+          <div class="history-main">
+            <div class="history-title">${entry.quizName}</div>
+            <div class="history-meta">${entry.date}</div>
+          </div>
+          <div class="history-score ${scoreClass}">
+            ${entry.percent}% (${entry.score}/${entry.total})
+          </div>
+        `;
+        historyList.appendChild(item);
+      });
+    }
+
+    function updateLastScore(entry) {
+      if (!entry) {
+        lastScorePill.style.display = "none";
+        return;
+      }
+      lastScorePill.style.display = "inline-flex";
+      lastScoreText.textContent = `${entry.percent}% on ${entry.quizName}`;
+    }
+
+    clearHistoryBtn.addEventListener("click", () => {
+      if (!confirm("Clear all saved scores in this browser?")) return;
+      saveScoreHistory([]);
+      renderHistory();
+      updateLastScore(null);
+    });
+
+    // ========= Init =========
+    function initApp() {
+      populateQuizSelects();
+      renderMaterials();
+      refreshUserQuestionCount();
+      refreshVocabCount();
+      renderHistory();
+
+      const history = loadScoreHistory();
+      if (history.length) {
+        const last = history[history.length - 1];
+        updateLastScore(last);
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
