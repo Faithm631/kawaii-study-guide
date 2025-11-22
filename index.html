@@ -808,15 +808,15 @@
             <div>
               <div class="card-title">Question & vocab builder</div>
               <div class="card-sub">
-                Add new questions and vocabulary directly here. They’ll be saved in this browser and added to your quizzes/games.
+                Add new questions and vocabulary directly here. They’re saved in this browser and added to your quizzes/games.
               </div>
             </div>
           </div>
 
           <div class="builder-grid">
-            <!-- Question builder -->
+            <!-- Question builder (left) -->
             <div>
-              <h3 style="margin:0 0 8px;font-size:1rem;">Add multiple-choice question</h3>
+              <h3 style="margin:0 0 8px;font-size:1rem;">Add single question</h3>
               <div class="mini-count" id="userQuestionCount">Custom questions: 0</div>
 
               <div class="field-group">
@@ -855,11 +855,27 @@
 
               <button id="builderAddQuestionBtn" class="btn btn-primary">Add question ✅</button>
               <div id="builderQuestionStatus" class="status-text"></div>
+
+              <hr style="margin:14px 0;border:none;border-top:1px dashed #e5e7eb;" />
+
+              <h3 style="margin:0 0 6px;font-size:1rem;">Import premade test (many questions)</h3>
+              <div class="helper-text">
+                Choose quiz & subject above. Paste one question per line in this format:<br />
+                <code>Question text | choice A | choice B | choice C | choice D | correct letter</code><br />
+                Example:<br />
+                <code>What is 2+2? | 3 | 4 | 5 | 6 | B</code>
+              </div>
+
+              <div class="field-group">
+                <textarea id="bulkQuestionsInput" placeholder="Paste your questions here, one per line..."></textarea>
+              </div>
+              <button id="bulkQuestionsBtn" class="btn btn-soft">Import questions 📚</button>
+              <div id="bulkQuestionsStatus" class="status-text"></div>
             </div>
 
-            <!-- Vocab builder -->
+            <!-- Vocab builder (right) -->
             <div>
-              <h3 style="margin:0 0 8px;font-size:1rem;">Add vocabulary item</h3>
+              <h3 style="margin:0 0 8px;font-size:1rem;">Add single vocabulary item</h3>
               <div class="mini-count" id="vocabCount">Vocabulary items: 0</div>
 
               <div class="field-group">
@@ -879,6 +895,22 @@
 
               <button id="vocabAddBtn" class="btn btn-soft">Add vocab 💡</button>
               <div id="vocabStatus" class="status-text"></div>
+
+              <hr style="margin:14px 0;border:none;border-top:1px dashed #e5e7eb;" />
+
+              <h3 style="margin:0 0 6px;font-size:1rem;">Import vocab list</h3>
+              <div class="helper-text">
+                Paste one term per line in this format:<br />
+                <code>word - definition</code> or <code>word : definition</code><br />
+                Category (GED Math / Medical etc.) will use the box above.
+              </div>
+              <div class="field-group">
+                <textarea id="bulkVocabInput" placeholder="Example:
+fraction - a part of a whole
+cardiology : study of the heart"></textarea>
+              </div>
+              <button id="bulkVocabBtn" class="btn btn-soft">Import vocab list 📥</button>
+              <div id="bulkVocabStatus" class="status-text"></div>
 
               <div style="margin-top:10px;">
                 <span class="pill-small">Tip</span>
@@ -1030,7 +1062,7 @@
               </a>
             </div>
 
-            <!-- Example: Match game embed (your sample link) -->
+            <!-- Example: Match game embed -->
             <div class="embed-card">
               <div class="embed-title">
                 <span>🧩</span>
@@ -1102,29 +1134,6 @@
             question: "If a problem asks for the “difference” between two numbers, what operation do you use?",
             choices: ["Addition", "Subtraction", "Multiplication", "Division"],
             correct: 1
-          },
-          {
-            subject: "Math vocab",
-            question: "The “product” of two numbers is the result of:",
-            choices: ["Adding them", "Subtracting them", "Multiplying them", "Dividing them"],
-            correct: 2
-          },
-          {
-            subject: "Math vocab",
-            question: "The “quotient” is the answer when you:",
-            choices: ["Add two numbers", "Subtract two numbers", "Multiply two numbers", "Divide one number by another"],
-            correct: 3
-          },
-          {
-            subject: "Math vocab",
-            question: "A problem says: “the total number of tickets sold.” Which operation does “total” usually signal?",
-            choices: [
-              "Addition to find how many altogether",
-              "Subtraction to find how many are left",
-              "Multiplication for repeated groups",
-              "Division into equal parts"
-            ],
-            correct: 0
           }
         ]
       },
@@ -1274,6 +1283,10 @@
     const builderQuestionStatus = document.getElementById("builderQuestionStatus");
     const userQuestionCount = document.getElementById("userQuestionCount");
 
+    const bulkQuestionsInput = document.getElementById("bulkQuestionsInput");
+    const bulkQuestionsBtn = document.getElementById("bulkQuestionsBtn");
+    const bulkQuestionsStatus = document.getElementById("bulkQuestionsStatus");
+
     // Vocab builder
     const vocabTermInput = document.getElementById("vocabTermInput");
     const vocabDefinitionInput = document.getElementById("vocabDefinitionInput");
@@ -1281,6 +1294,10 @@
     const vocabAddBtn = document.getElementById("vocabAddBtn");
     const vocabStatus = document.getElementById("vocabStatus");
     const vocabCount = document.getElementById("vocabCount");
+
+    const bulkVocabInput = document.getElementById("bulkVocabInput");
+    const bulkVocabBtn = document.getElementById("bulkVocabBtn");
+    const bulkVocabStatus = document.getElementById("bulkVocabStatus");
 
     // Vocab games
     const beeInfo = document.getElementById("beeInfo");
@@ -1574,7 +1591,7 @@
         createdAt: Date.now()
       };
 
-      const list = addUserQuestion(questionObj);
+      addUserQuestion(questionObj);
       refreshUserQuestionCount();
 
       builderQuestionStatus.textContent = "Question added!";
@@ -1585,6 +1602,62 @@
       builderChoice2.value = "";
       builderChoice3.value = "";
       builderChoice4.value = "";
+    });
+
+    bulkQuestionsBtn.addEventListener("click", () => {
+      bulkQuestionsStatus.textContent = "";
+      bulkQuestionsStatus.className = "status-text";
+
+      const quizId = builderQuizSelect.value;
+      const subject = builderSubjectInput.value.trim() || "Custom";
+      const text = bulkQuestionsInput.value;
+      if (!text.trim()) {
+        bulkQuestionsStatus.textContent = "Paste some lines first.";
+        bulkQuestionsStatus.classList.add("status-bad");
+        return;
+      }
+
+      const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+      let added = 0;
+      let skipped = 0;
+
+      const userQs = loadUserQuestions();
+
+      lines.forEach(line => {
+        const parts = line.split("|").map(p => p.trim());
+        if (parts.length < 6) {
+          skipped++;
+          return;
+        }
+        const [qText, a, b, c, d, corrLetterRaw] = parts;
+        const letter = corrLetterRaw.toUpperCase();
+        const indexMap = { A: 0, B: 1, C: 2, D: 3 };
+        const rawChoices = [a, b, c, d];
+        const choices = rawChoices.filter(x => x);
+        const correctIndex = indexMap[letter];
+
+        if (!qText || choices.length < 2 || correctIndex == null || !rawChoices[correctIndex]) {
+          skipped++;
+          return;
+        }
+
+        const qObj = {
+          quizId,
+          subject,
+          question: qText,
+          choices,
+          correct: choices.indexOf(rawChoices[correctIndex]),
+          createdAt: Date.now()
+        };
+        userQs.push(qObj);
+        added++;
+      });
+
+      saveUserQuestions(userQs);
+      refreshUserQuestionCount();
+
+      bulkQuestionsStatus.textContent = `Imported ${added} question(s). Skipped ${skipped}.`;
+      bulkQuestionsStatus.classList.add(added ? "status-ok" : "status-bad");
     });
 
     // ========= Vocab builder & games =========
@@ -1625,6 +1698,52 @@
       vocabCategoryInput.value = "";
     });
 
+    bulkVocabBtn.addEventListener("click", () => {
+      bulkVocabStatus.textContent = "";
+      bulkVocabStatus.className = "status-text";
+
+      const text = bulkVocabInput.value;
+      const category = vocabCategoryInput.value.trim() || "General";
+      if (!text.trim()) {
+        bulkVocabStatus.textContent = "Paste some vocab lines first.";
+        bulkVocabStatus.classList.add("status-bad");
+        return;
+      }
+
+      const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+      let added = 0;
+      let skipped = 0;
+      const vocabList = loadVocab();
+
+      lines.forEach(line => {
+        let idx = line.indexOf("-");
+        if (idx === -1) idx = line.indexOf(":");
+        if (idx === -1) {
+          skipped++;
+          return;
+        }
+        const term = line.slice(0, idx).trim();
+        const definition = line.slice(idx + 1).trim();
+        if (!term || !definition) {
+          skipped++;
+          return;
+        }
+        vocabList.push({
+          term,
+          definition,
+          category,
+          createdAt: Date.now()
+        });
+        added++;
+      });
+
+      saveVocab(vocabList);
+      refreshVocabCount();
+
+      bulkVocabStatus.textContent = `Imported ${added} vocab item(s). Skipped ${skipped}.`;
+      bulkVocabStatus.classList.add(added ? "status-ok" : "status-bad");
+    });
+
     // Spelling bee
     function pickRandomVocab() {
       const list = loadVocab();
@@ -1648,6 +1767,7 @@
       beeInput.focus();
       beeFeedback.textContent = "";
       beeFeedback.className = "bee-feedback";
+      beeInfo.textContent = "Type the word that matches this definition.";
     }
 
     beeNewBtn.addEventListener("click", () => {
@@ -1856,4 +1976,3 @@
   </script>
 </body>
 </html>
-
