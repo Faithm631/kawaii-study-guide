@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kawaii Study Hub</title>
+
+  <!-- Cute font (needs internet, but site still works without it) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap">
+
+  <style>
+    :root {
+      --baby-blue: #cfe9ff;
+      --baby-blue-deep: #60a5fa;
+      --baby-pink: #ffe4f4;
+      --baby-pink-deep: #ec4899;
+      --lavender: #e7ddff;
+      --lavender-deep: #7c3aed;
+      --mint: #a7f3d0;
+      --soft-red: #fecaca;
+      --soft-gray: #6b7280;
+      --card-bg: #ffffffee;
+      --shadow-soft: 0 16px 40px rgba(148, 163, 184, 0.35);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Baloo 2", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, var(--baby-blue), transparent 60%),
+        radial-gradient(circle at bottom right, var(--baby-pink), transparent 60%),
+        radial-gradient(circle at center, var(--lavender), transparent 60%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1050px;
+      background: var(--card-bg);
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      overflow: hidden;
+    }
+
+    @media (max-width: 800px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+      }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, var(--baby-pink), var(--lavender));
+      padding: 18px 18px 20px;
+      border-right: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffffffaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .brand-text-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #9d174d;
+      line-height: 1.1;
+    }
+
+    .brand-text-sub {
+      font-size: 0.8rem;
+      color: #6b21a8;
+    }
+
+    .sidebar-section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #6b21a8;
+      margin: 14px 4px 6px;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 10px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #4a044e;
+      transition: background 0.12s ease, transform 0.06s ease;
+    }
+
+    .nav-btn span.icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ffffffaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .nav-btn.active {
+      background: #fce7f3dd;
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:hover {
+      background: #fdf2ffcc;
+    }
+
+    .sidebar-footer {
+      margin-top: 24px;
+      padding: 10px 8px 6px;
+      border-radius: 16px;
+      background: #ffffff66;
+      font-size: 0.8rem;
+      color: #6b21a8;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fef3c7cc;
+      font-size: 0.7rem;
+      color: #92400e;
+      margin-top: 4px;
+    }
+
+    /* Main */
+    .main {
+      padding: 18px 22px 22px;
+      background:
+        radial-gradient(circle at top right, #e0f2fe, transparent 55%),
+        radial-gradient(circle at bottom left, #fef3c7, transparent 55%);
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .main-title {
+      font-size: 1.4rem;
+      color: #1f2937;
+    }
+
+    .main-subtitle {
+      font-size: 0.85rem;
+      color: var(--soft-gray);
+    }
+
+    .score-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: #e0f2fed9;
+      color: #1d4ed8;
+    }
+
+    .score-pill strong { font-weight: 700; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: 0 12px 30px rgba(148, 163, 184, 0.35);
+      margin-bottom: 14px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--soft-gray);
+    }
+
+    .select-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .select-row label {
+      font-size: 0.85rem;
+      color: var(--soft-gray);
+    }
+
+    select {
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.1s;
+    }
+
+    .btn-primary {
+      background: #bfdbfe;
+      color: #1d4ed8;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-soft {
+      background: #fce7f3;
+      color: #9d174d;
+      box-shadow: 0 3px 10px rgba(236, 72, 153, 0.25);
+    }
+
+    .btn-soft:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 12px rgba(236, 72, 153, 0.35);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      box-shadow: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #93c5fd, #f9a8d4, #c4b5fd);
+      transition: width 0.25s ease;
+    }
+
+    .question-subject {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #dbeafe;
+      color: #1d4ed8;
+      margin-bottom: 4px;
+    }
+
+    .question-text {
+      font-size: 1rem;
+      color: #111827;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .choice-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #f9fafb;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.1s ease;
+    }
+
+    .choice-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(148, 163, 184, 0.4);
+      background: #fef3ff;
+    }
+
+    .choice-letter {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #374151;
+      flex-shrink: 0;
+    }
+
+    .choice-btn.correct { background: #d1fae5; }
+    .choice-btn.incorrect { background: #fee2e2; }
+
+    .quiz-status-line {
+      font-size: 0.8rem;
+      color: var(--soft-gray);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .result-summary {
+      text-align: center;
+      padding: 12px 4px 4px;
+    }
+
+    .result-summary h3 {
+      margin: 4px 0 8px;
+      font-size: 1.2rem;
+      color: var(--lavender-deep);
+    }
+
+    .result-summary p {
+      margin: 3px 0;
+      font-size: 0.9rem;
+      color: #374151;
+    }
+
+    .result-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .pill-good { background: #d1fae5; color: #166534; }
+    .pill-okay { background: #fef9c3; color: #854d0e; }
+    .pill-try  { background: #fee2e2; color: #b91c1c; }
+
+    /* Materials */
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .material-card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.4);
+    }
+
+    .material-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .material-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #1d4ed8;
+    }
+
+    .material-desc {
+      font-size: 0.85rem;
+      color: var(--soft-gray);
+      margin-bottom: 8px;
+    }
+
+    .material-link {
+      font-size: 0.85rem;
+      color: #ec4899;
+      text-decoration: none;
+    }
+
+    .material-link:hover { text-decoration: underline; }
+
+    /* History */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 8px 10px;
+      box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+    }
+
+    .history-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .history-title { font-weight: 600; color: #111827; }
+
+    .history-meta { font-size: 0.75rem; color: var(--soft-gray); }
+
+    .history-score {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .history-score.good { color: #166534; }
+    .history-score.okay { color: #854d0e; }
+    .history-score.try  { color: #b91c1c; }
+
+    .empty-text { font-size: 0.85rem; color: var(--soft-gray); }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🎀</div>
+        <div>
+          <div class="brand-text-title">Kawaii Study</div>
+          <div class="brand-text-sub">Pastel practice hub</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">Sections</div>
+      <div class="nav-list">
+        <button class="nav-btn active" data-section="quiz">
+          <span class="icon">📋</span>
+          <span>Quizzes</span>
+        </button>
+        <button class="nav-btn" data-section="materials">
+          <span class="icon">📎</span>
+          <span>Study materials</span>
+        </button>
+        <button class="nav-btn" data-section="history">
+          <span class="icon">📈</span>
+          <span>Score history</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        Your scores are saved in this browser only.<br />
+        <span class="chip">No login • Just for you 💕</span>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="main-header">
+        <div>
+          <div class="main-title">Welcome to your study corner ☁️</div>
+          <div class="main-subtitle">
+            Choose a quiz, practice, then check your progress over time.
+          </div>
+        </div>
+        <div id="lastScorePill" class="score-pill" style="display:none;">
+          Last score: <strong id="lastScoreText"></strong>
+        </div>
+      </header>
+
+      <!-- Quiz Section -->
+      <section id="section-quiz" class="section active">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Quiz setup</div>
+              <div class="card-sub">Pick what you want to practice today.</div>
+            </div>
+          </div>
+
+          <div class="select-row">
+            <label for="quizSelect">Quiz:</label>
+            <select id="quizSelect"></select>
+            <button id="startQuizBtn" class="btn btn-primary">
+              <span>Start quiz</span> <span>✨</span>
+            </button>
+          </div>
+          <div class="card-sub" id="quizDescription"></div>
+        </div>
+
+        <div id="quizCard" class="card" style="display:none;">
+          <div class="progress-bar">
+            <div id="quizProgressInner" class="progress-inner"></div>
+          </div>
+          <div id="quizContent"></div>
+          <div class="quiz-status-line" id="quizStatusLine"></div>
+        </div>
+      </section>
+
+      <!-- Materials Section -->
+      <section id="section-materials" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Study materials</div>
+              <div class="card-sub">
+                Click a card to open resources in a new tab. You can edit this list in the file.
+              </div>
+            </div>
+          </div>
+          <div class="materials-grid" id="materialsGrid"></div>
+        </div>
+      </section>
+
+      <!-- History Section -->
+      <section id="section-history" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Score history</div>
+              <div class="card-sub">
+                Every finished quiz session is saved here for this browser.
+              </div>
+            </div>
+            <button id="clearHistoryBtn" class="btn btn-danger">
+              Clear history
+            </button>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // =======================
+    // QUIZZES
+    // Inspired by your Quizlet links, but newly written so they're yours.
+    // =======================
+    const QUIZZES = {
+      ged_math_terms: {
+        id: "ged_math_terms",
+        name: "GED • Math keywords",
+        description: "Words like sum, difference, product, quotient, total, perimeter, and more.",
+        questions: [
+          {
+            subject: "Math vocab",
+            question: "The word “sum” in a word problem usually means you should:",
+            choices: [
+              "Multiply the numbers",
+              "Subtract the numbers",
+              "Add the numbers",
+              "Divide the numbers"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Math vocab",
+            question: "If a problem asks for the “difference” between two numbers, what operation do you use?",
+            choices: [
+              "Addition",
+              "Subtraction",
+              "Multiplication",
+              "Division"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Math vocab",
+            question: "The “product” of two numbers is the result of:",
+            choices: [
+              "Adding them",
+              "Subtracting them",
+              "Multiplying them",
+              "Dividing them"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Math vocab",
+            question: "The “quotient” is the answer when you:",
+            choices: [
+              "Add",
+              "Subtract",
+              "Multiply",
+              "Divide"
+            ],
+            correct: 3
+          },
+          {
+            subject: "Math vocab",
+            question: "A problem says: “the total number of tickets.” Which operation does “total” usually signal?",
+            choices: [
+              "Addition to find how many altogether",
+              "Subtraction to find how many are left",
+              "Multiplication for repeated groups",
+              "Division into equal parts"
+            ],
+            correct: 0
+          },
+          {
+            subject: "Math vocab",
+            question: "The phrase “how many are left?” usually means you should:",
+            choices: [
+              "Add the numbers",
+              "Subtract one amount from another",
+              "Multiply the numbers",
+              "Divide the numbers"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Math vocab",
+            question: "A word problem says: “3 times as many.” This is a clue to:",
+            choices: [
+              "Add 3 to the number",
+              "Subtract 3 from the number",
+              "Multiply by 3",
+              "Divide by 3"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Math vocab",
+            question: "The phrase “split equally among 4 friends” suggests which operation?",
+            choices: [
+              "Addition",
+              "Subtraction",
+              "Multiplication",
+              "Division"
+            ],
+            correct: 3
+          },
+          {
+            subject: "Math vocab",
+            question: "If you need the “average” of test scores, you should:",
+            choices: [
+              "Add all the scores and divide by how many scores there are",
+              "Subtract the smallest score from the largest score",
+              "Multiply all the scores together",
+              "Add all the scores and stop there"
+            ],
+            correct: 0
+          },
+          {
+            subject: "Math vocab",
+            question: "The “perimeter” of a rectangle is:",
+            choices: [
+              "The number of square units inside the shape",
+              "The distance all the way around the shape",
+              "The length of one side of the shape",
+              "Half of the distance around the shape"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Math vocab",
+            question: "The “area” of a rectangle is:",
+            choices: [
+              "The distance around the shape",
+              "The distance of the longest side",
+              "How many square units cover the surface inside",
+              "Half of the perimeter"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Math vocab",
+            question: "A problem says “at least 10 miles.” In math, “at least 10” means:",
+            choices: [
+              "Exactly 10",
+              "Less than 10",
+              "10 or more",
+              "Less than or equal to 10"
+            ],
+            correct: 2
+          }
+        ]
+      },
+
+      ged_language_writing: {
+        id: "ged_language_writing",
+        name: "GED • Language arts: writing",
+        description: "Parts of speech and writing terms: active verbs, adjectives, run-ons, fragments, and more.",
+        questions: [
+          {
+            subject: "Writing vocab",
+            question: "An “active verb” is a verb that:",
+            choices: [
+              "Shows an action done by the subject",
+              "Shows no action at all",
+              "Comes after a helping verb",
+              "Only appears in questions"
+            ],
+            correct: 0
+          },
+          {
+            subject: "Writing vocab",
+            question: "An adjective is a part of speech that mainly describes:",
+            choices: [
+              "Verbs",
+              "Nouns or pronouns",
+              "Prepositions",
+              "Conjunctions"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Writing vocab",
+            question: "An adverb usually describes:",
+            choices: [
+              "Nouns only",
+              "Verbs, adjectives, or other adverbs",
+              "Prepositions only",
+              "Conjunctions only"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Writing vocab",
+            question: "Which sentence uses an active verb?",
+            choices: [
+              "The cake was eaten by the children.",
+              "The children ate the cake.",
+              "The cake was delicious.",
+              "The cake had been on the table."
+            ],
+            correct: 1
+          },
+          {
+            subject: "Writing vocab",
+            question: "A “topic sentence” usually does what in a paragraph?",
+            choices: [
+              "Gives a random detail",
+              "Restates the conclusion",
+              "Introduces the main idea",
+              "Asks a question unrelated to the paragraph"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Writing vocab",
+            question: "A “thesis statement” in an essay is best described as:",
+            choices: [
+              "A list of every detail you will mention",
+              "The main claim or point you are trying to prove",
+              "A random interesting fact",
+              "A sentence that repeats the prompt word for word"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Writing vocab",
+            question: "A sentence fragment is a group of words that:",
+            choices: [
+              "Has a subject and verb and forms a complete thought",
+              "Is too long but still correct",
+              "Lacks a subject, a verb, or a complete thought",
+              "Always starts with a capital letter"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Writing vocab",
+            question: "A run-on sentence happens when:",
+            choices: [
+              "You use too many commas in a list",
+              "Two or more complete sentences are joined incorrectly",
+              "A sentence starts with the word “and”",
+              "You end a sentence with a preposition"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Writing vocab",
+            question: "Which of these is a pronoun?",
+            choices: [
+              "House",
+              "Quickly",
+              "They",
+              "Beautiful"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Writing vocab",
+            question: "Which sentence is punctuated correctly?",
+            choices: [
+              "Its time to go, we are late.",
+              "It’s time to go; we are late.",
+              "Its time to go we are late.",
+              "It’s time to go we are late."
+            ],
+            correct: 1
+          },
+          {
+            subject: "Writing vocab",
+            question: "A transition word or phrase (like “however” or “for example”) is used to:",
+            choices: [
+              "Add confusing details",
+              "Introduce unrelated ideas",
+              "Tie ideas together and show relationships",
+              "Make sentences longer for no reason"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Writing vocab",
+            question: "In formal writing, you should usually avoid:",
+            choices: [
+              "Clear sentence structure",
+              "Strong verbs",
+              "Slang and texting abbreviations",
+              "Logical organization"
+            ],
+            correct: 2
+          }
+        ]
+      },
+
+      medical_terminology: {
+        id: "medical_terminology",
+        name: "Medical terminology basics",
+        description: "Common prefixes, suffixes, and word roots used in healthcare terms.",
+        questions: [
+          {
+            subject: "Med terms",
+            question: "In medical words, the root “cardi / cardio” refers to the:",
+            choices: [
+              "Lungs",
+              "Stomach",
+              "Heart",
+              "Brain"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Med terms",
+            question: "The suffix “-itis” usually means:",
+            choices: [
+              "Inflammation",
+              "Surgical removal",
+              "Study of",
+              "Enlargement"
+            ],
+            correct: 0
+          },
+          {
+            subject: "Med terms",
+            question: "The suffix “-ectomy” most often means:",
+            choices: [
+              "Inflammation",
+              "Viewing with a scope",
+              "Surgical removal",
+              "Pain"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Med terms",
+            question: "The prefix “hyper-” in medical terminology means:",
+            choices: [
+              "Slow or below normal",
+              "Above normal or too much",
+              "Around or surrounding",
+              "Within"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Med terms",
+            question: "The prefix “hypo-” most often means:",
+            choices: [
+              "Overactive",
+              "Under, below, or too little",
+              "Fast",
+              "Between"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Med terms",
+            question: "The combining form “gastr / gastro” refers to the:",
+            choices: [
+              "Liver",
+              "Stomach",
+              "Kidneys",
+              "Skin"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Med terms",
+            question: "The suffix “-logy” usually means:",
+            choices: [
+              "Disease of",
+              "Specialist in",
+              "Study of",
+              "Treatment of"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Med terms",
+            question: "The term “neurology” is most closely related to the study of the:",
+            choices: [
+              "Bones",
+              "Nervous system",
+              "Lungs",
+              "Digestive system"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Med terms",
+            question: "The root “derm / dermato” refers to the:",
+            choices: [
+              "Skin",
+              "Heart",
+              "Blood",
+              "Muscles"
+            ],
+            correct: 0
+          },
+          {
+            subject: "Med terms",
+            question: "The prefix “brady-” in a word like “bradycardia” means:",
+            choices: [
+              "Fast",
+              "Slow",
+              "Irregular",
+              "Strong"
+            ],
+            correct: 1
+          },
+          {
+            subject: "Med terms",
+            question: "The prefix “tachy-” in a word like “tachycardia” means:",
+            choices: [
+              "Slow",
+              "Normal",
+              "Fast",
+              "Weak"
+            ],
+            correct: 2
+          },
+          {
+            subject: "Med terms",
+            question: "The root “nephro” is associated with which organ?",
+            choices: [
+              "Liver",
+              "Kidney",
+              "Stomach",
+              "Lung"
+            ],
+            correct: 1
+          }
+        ]
+      }
+    };
+
+    // =======================
+    // STUDY MATERIALS
+    // (You can change or add to these.)
+    // =======================
+    const STUDY_MATERIALS = [
+      {
+        title: "GED math terms – original flashcards",
+        tag: "GED Math",
+        description: "Your Quizlet set that inspired the math vocabulary quiz.",
+        url: "https://quizlet.com/7810655/ged-math-flash-cards/"
+      },
+      {
+        title: "GED language arts writing – original flashcards",
+        tag: "GED Language",
+        description: "Your Quizlet set that inspired the writing vocabulary quiz.",
+        url: "https://quizlet.com/6527037/ged-language-arts-writing-flash-cards/"
+      },
+      {
+        title: "Medical terminology – original flashcards",
+        tag: "Medical",
+        description: "Your Quizlet set that inspired the medical terminology quiz.",
+        url: "https://quizlet.com/1070169354/medical-terminology-flash-cards/"
+      },
+      {
+        title: "GED official site",
+        tag: "GED",
+        description: "Official information and practice resources for the GED test.",
+        url: "https://ged.com"
+      },
+      {
+        title: "Khan Academy – Math",
+        tag: "Math",
+        description: "Free lessons and practice for algebra, geometry, and more.",
+        url: "https://www.khanacademy.org/math"
+      }
+    ];
+
+    // =======================
+    // SCORE STORAGE (browser localStorage)
+    // =======================
+    const STORAGE_KEY = "kawaiiStudyScores";
+
+    function loadScoreHistory() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        return JSON.parse(raw);
+      } catch {
+        return [];
+      }
+    }
+
+    function saveScoreHistory(history) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+      } catch {
+        // ignore
+      }
+    }
+
+    function addHistoryEntry(entry) {
+      const history = loadScoreHistory();
+      history.push(entry);
+      saveScoreHistory(history);
+      return history;
+    }
+
+    // =======================
+    // APP STATE & ELEMENTS
+    // =======================
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const sections = {
+      quiz: document.getElementById("section-quiz"),
+      materials: document.getElementById("section-materials"),
+      history: document.getElementById("section-history")
+    };
+
+    const quizSelect = document.getElementById("quizSelect");
+    const quizDescription = document.getElementById("quizDescription");
+    const startQuizBtn = document.getElementById("startQuizBtn");
+    const quizCard = document.getElementById("quizCard");
+    const quizContent = document.getElementById("quizContent");
+    const quizProgressInner = document.getElementById("quizProgressInner");
+    const quizStatusLine = document.getElementById("quizStatusLine");
+    const materialsGrid = document.getElementById("materialsGrid");
+    const historyList = document.getElementById("historyList");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+    const lastScorePill = document.getElementById("lastScorePill");
+    const lastScoreText = document.getElementById("lastScoreText");
+
+    let currentQuiz = null;
+    let currentIndex = 0;
+    let currentScore = 0;
+    let answeredCurrent = false;
+
+    // Navigation
+    navButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-section");
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        Object.entries(sections).forEach(([key, el]) => {
+          el.classList.toggle("active", key === target);
+        });
+
+        if (target === "history") {
+          renderHistory();
+        }
+      });
+    });
+
+    // Populate quiz dropdown
+    function populateQuizSelect() {
+      quizSelect.innerHTML = "";
+      Object.values(QUIZZES).forEach(q => {
+        const option = document.createElement("option");
+        option.value = q.id;
+        option.textContent = q.name;
+        quizSelect.appendChild(option);
+      });
+
+      const first = Object.values(QUIZZES)[0];
+      if (first) {
+        quizSelect.value = first.id;
+        quizDescription.textContent = first.description;
+      }
+    }
+
+    quizSelect.addEventListener("change", () => {
+      const q = QUIZZES[quizSelect.value];
+      if (!q) return;
+      quizDescription.textContent = q.description;
+    });
+
+    // Start quiz
+    startQuizBtn.addEventListener("click", () => {
+      const q = QUIZZES[quizSelect.value];
+      if (!q) return;
+      currentQuiz = {
+        ...q,
+        questions: shuffleArray(q.questions.slice())
+      };
+      currentIndex = 0;
+      currentScore = 0;
+      answeredCurrent = false;
+      quizCard.style.display = "block";
+      renderQuestion();
+    });
+
+    function shuffleArray(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function updateQuizProgress() {
+      if (!currentQuiz) return;
+      const total = currentQuiz.questions.length;
+      const percent = (currentIndex / total) * 100;
+      quizProgressInner.style.width = percent + "%";
+      quizStatusLine.textContent = `Question ${currentIndex + 1} of ${total}`;
+    }
+
+    function renderQuestion() {
+      if (!currentQuiz) return;
+      const total = currentQuiz.questions.length;
+      if (currentIndex >= total) {
+        renderResults(false);
+        return;
+      }
+
+      answeredCurrent = false;
+      const q = currentQuiz.questions[currentIndex];
+      updateQuizProgress();
+
+      const letters = ["A", "B", "C", "D", "E", "F"];
+
+      quizContent.innerHTML = `
+        <div class="question-subject">${q.subject}</div>
+        <div class="question-text">${q.question}</div>
+        <div class="choices">
+          ${q.choices
+            .map(
+              (choice, i) => `
+              <button class="choice-btn" data-index="${i}">
+                <span class="choice-letter">${letters[i]}</span>
+                <span>${choice}</span>
+              </button>
+            `
+            )
+            .join("")}
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;">
+          <button id="quitQuizBtn" class="btn btn-soft">End quiz early</button>
+          <button id="nextQuestionBtn" class="btn btn-primary" disabled>Next</button>
+        </div>
+      `;
+
+      const choiceButtons = quizContent.querySelectorAll(".choice-btn");
+      const nextBtn = document.getElementById("nextQuestionBtn");
+      const quitBtn = document.getElementById("quitQuizBtn");
+
+      choiceButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (answeredCurrent) return;
+          answeredCurrent = true;
+
+          const chosen = Number(btn.getAttribute("data-index"));
+          const correctIndex = q.correct;
+
+          if (chosen === correctIndex) {
+            btn.classList.add("correct");
+            currentScore++;
+          } else {
+            btn.classList.add("incorrect");
+            choiceButtons.forEach(b => {
+              if (Number(b.getAttribute("data-index")) === correctIndex) {
+                b.classList.add("correct");
+              }
+            });
+          }
+
+          choiceButtons.forEach(b => (b.disabled = true));
+          nextBtn.disabled = false;
+        });
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex++;
+        renderQuestion();
+      });
+
+      quitBtn.addEventListener("click", () => {
+        renderResults(true);
+      });
+    }
+
+    function renderResults(early) {
+      if (!currentQuiz) return;
+      const total = currentQuiz.questions.length;
+      const percent = Math.round((currentScore / total) * 100);
+
+      let pillClass = "pill-try";
+      let message = "Keep going — every session helps.";
+      if (percent >= 80) {
+        pillClass = "pill-good";
+        message = "Amazing! You’re very close to ready.";
+      } else if (percent >= 60) {
+        pillClass = "pill-okay";
+        message = "Nice work. A bit more practice will boost you further.";
+      }
+
+      quizProgressInner.style.width = "100%";
+      quizStatusLine.textContent = early
+        ? `You ended the quiz early. You answered ${currentIndex} of ${total} questions.`
+        : `You completed this quiz.`;
+
+      const now = new Date();
+      const entry = {
+        quizId: currentQuiz.id,
+        quizName: currentQuiz.name,
+        date: now.toLocaleString(),
+        score: currentScore,
+        total,
+        percent
+      };
+      const history = addHistoryEntry(entry);
+      updateLastScore(entry);
+
+      quizContent.innerHTML = `
+        <div class="result-summary">
+          <h3>${early ? "Session summary" : "Quiz complete!"}</h3>
+          <p>You answered <strong>${currentScore}</strong> out of <strong>${total}</strong> questions.</p>
+          <p><span class="result-pill ${pillClass}">${percent}%</span></p>
+          <p>${message}</p>
+          <p style="font-size:0.8rem;color:#9ca3af;margin-top:8px;">
+            Start again, or switch quizzes from the menu above.
+          </p>
+          <button id="restartQuizBtn" class="btn btn-primary" style="margin-top:8px;">
+            Try again 🔁
+          </button>
+        </div>
+      `;
+
+      const restartBtn = document.getElementById("restartQuizBtn");
+      restartBtn.addEventListener("click", () => {
+        currentIndex = 0;
+        currentScore = 0;
+        currentQuiz.questions = shuffleArray(currentQuiz.questions);
+        renderQuestion();
+      });
+
+      renderHistory();
+    }
+
+    // Materials
+    function renderMaterials() {
+      materialsGrid.innerHTML = "";
+      STUDY_MATERIALS.forEach(mat => {
+        const card = document.createElement("div");
+        card.className = "material-card";
+        card.innerHTML = `
+          <div class="material-title">
+            <span>📎</span>
+            <span>${mat.title}</span>
+          </div>
+          <div style="margin:4px 0 6px;">
+            <span class="material-tag">${mat.tag}</span>
+          </div>
+          <div class="material-desc">${mat.description}</div>
+          <a class="material-link" href="${mat.url}" target="_blank" rel="noopener noreferrer">
+            Open resource ↗
+          </a>
+        `;
+        materialsGrid.appendChild(card);
+      });
+    }
+
+    // History
+    function renderHistory() {
+      const history = loadScoreHistory();
+      historyList.innerHTML = "";
+
+      if (!history.length) {
+        const p = document.createElement("p");
+        p.className = "empty-text";
+        p.textContent = "No scores yet. Take a quiz and your results will show up here.";
+        historyList.appendChild(p);
+        return;
+      }
+
+      const sorted = [...history].reverse(); // newest first
+
+      sorted.forEach(entry => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        let scoreClass = "try";
+        if (entry.percent >= 80) scoreClass = "good";
+        else if (entry.percent >= 60) scoreClass = "okay";
+
+        item.innerHTML = `
+          <div class="history-main">
+            <div class="history-title">${entry.quizName}</div>
+            <div class="history-meta">${entry.date}</div>
+          </div>
+          <div class="history-score ${scoreClass}">
+            ${entry.percent}% (${entry.score}/${entry.total})
+          </div>
+        `;
+        historyList.appendChild(item);
+      });
+    }
+
+    function updateLastScore(entry) {
+      if (!entry) {
+        lastScorePill.style.display = "none";
+        return;
+      }
+      lastScorePill.style.display = "inline-flex";
+      lastScoreText.textContent = `${entry.percent}% on ${entry.quizName}`;
+    }
+
+    clearHistoryBtn.addEventListener("click", () => {
+      if (!confirm("Clear all saved scores in this browser?")) return;
+      saveScoreHistory([]);
+      renderHistory();
+      updateLastScore(null);
+    });
+
+    // Init
+    function initApp() {
+      populateQuizSelect();
+      renderMaterials();
+      renderHistory();
+
+      const history = loadScoreHistory();
+      if (history.length) {
+        const last = history[history.length - 1];
+        updateLastScore(last);
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
